@@ -22,26 +22,30 @@ class PermissionsController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'permission_name' => 'required|string|unique:permissions,name',
-        ];
+        try {
+            $rules = [
+                'permission_name' => 'required|string|unique:permissions,name',
+            ];
 
-        $messages = [
-            'permission_name.required' => 'Permission Name Field is Blank ! Try Again',
-            'permission_name.unique' => 'Permission Name already exists ! Try Again',
-        ];
+            $messages = [
+                'permission_name.required' => 'Permission Name Field is Blank! Try Again',
+                'permission_name.unique' => 'Permission Name already exists! Try Again',
+            ];
 
-        $validator = Validator::make($request->all(), $rules, $messages);
+            $validator = Validator::make($request->all(), $rules, $messages);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            }
+
+            $permission = Permission::create([
+                'name' => $request->permission_name,
+            ]);
+
+            return response()->json(['success' => true, 'permission' => $permission], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing your request.'], 500);
         }
-
-        $permission = Permission::create([
-            'name' => $request->permission_name,
-        ]);
-
-        return response()->json(['success' => true, 'permission' => $permission], 200);
     }
 
     public function destroy($permissionId)
