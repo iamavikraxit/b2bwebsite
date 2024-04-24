@@ -22,9 +22,7 @@
                             <input class="form-control mt-1" id="validationTooltip01" type="text" name="permission_name"
                                 placeholder="Type Permission Name Here" required="">
                             <div class="valid-tooltip">Looks good!</div>
-                            @error('permission_name')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            {{-- <div class="invalid-tooltip" id="permission_name-error"></div> --}}
                         </div>
 
                         <div class="col-12">
@@ -41,7 +39,7 @@
             function storePermission() {
                 $.ajax({
                     type: 'POST',
-                    url: '{{ url("permissions") }}',
+                    url: '{{ url('permissions') }}',
                     data: $('#storePermissionForm').serialize(),
                     success: function(response) {
                         var permissionName = response.permission.name;
@@ -52,18 +50,33 @@
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Okay'
                         }).then((result) => {
-                            window.location.href = '{{ url("permissions") }}';
+                            window.location.href = '{{ url('permissions') }}';
                         });
                     },
                     error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'An error occurred while creating permission. Please try again later.',
-                            icon: 'error',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Okay'
-                        });
+                        // console.error(xhr.responseText);
+                        if (xhr.status === 422) {
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                var inputName = key.replace(".", "_");
+                                var errorMessage = value[0]; // Get the first error message for simplicity
+                                var $inputField = $('input[name="' + key + '"]');
+                                $inputField.addClass(
+                                    'is-invalid'
+                                    ); // Add Bootstrap's is-invalid class to highlight the input field
+                                $inputField.after('<div class="invalid-feedback">' + errorMessage +
+                                    '</div>'); // Append error message below input field
+                                setTimeout(function() {
+                                    $inputField.removeClass(
+                                    'is-invalid'); // Remove is-invalid class after 5 seconds
+                                    $inputField.next('.invalid-feedback')
+                                .remove(); // Remove error message after 5 seconds
+                                }, 2500);
+                            });
+                        } else {
+                            $('.permission-name-error').html(
+                                'An error occurred while creating permission. Please try again later.');
+                        }
                     }
                 });
             }
