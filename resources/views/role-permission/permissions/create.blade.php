@@ -9,7 +9,8 @@
                             <h4>Create Permission Form</h4>
                         </div>
                         <div class="col-auto">
-                            <a href="{{ url('permissions') }}"><button class="btn btn-md btn-danger">Back</button></a>
+                            <a href="{{ url('permissions') }}"><button class="btn btn-md btn-danger"><i
+                                class="fa fa-arrow-left m-1"></i>Back</button></a>
                         </div>
                     </div>
                 </div>
@@ -22,7 +23,6 @@
                             <input class="form-control mt-1" id="validationTooltip01" type="text" name="permission_name"
                                 placeholder="Type Permission Name Here" required="">
                             <div class="valid-tooltip">Looks good!</div>
-                            {{-- <div class="invalid-tooltip" id="permission_name-error"></div> --}}
                         </div>
 
                         <div class="col-12">
