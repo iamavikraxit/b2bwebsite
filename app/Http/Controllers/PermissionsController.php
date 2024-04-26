@@ -48,6 +48,16 @@ class PermissionsController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        try {
+            $permission = Permission::findOrFail($id);
+            dd($permission);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing your request.'], 500);
+        }
+    }
+
     public function destroy($permissionId)
     {
         try {

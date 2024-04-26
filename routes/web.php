@@ -23,4 +23,4 @@ Route::get('dashboard', function () {
 
 Route::resource('permissions', App\Http\Controllers\PermissionsController::class);
 Route::delete('permissions/{permissionId}/delete', [App\Http\Controllers\PermissionsController::class, 'destroy'])->name('permissions.destroy');
-// Route::delete('permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+Route::get('permissions/{permission}/edit', [App\Http\Controllers\PermissionsController::class, 'edit'])->name('permissions.edit');
