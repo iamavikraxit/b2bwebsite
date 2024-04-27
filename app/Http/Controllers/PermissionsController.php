@@ -55,7 +55,30 @@ class PermissionsController extends Controller
 
     public function update(Request $request, Permission $permission)
     {
-        // Put update logic here
+        try {
+            $rules = [
+                'permission_name' => 'required|string|unique:permissions,name,' . $permission->id,
+            ];
+
+            $messages = [
+                'permission_name.required' => 'Permission Name Field is Blank! Try Again',
+                'permission_name.unique' => 'The permission name is already taken. Please choose a different name.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            }
+
+            $permission->update([
+                'name' => $request->permission_name,
+            ]);
+
+            return response()->json(['success' => true, 'permission' => $permission], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing your request.'], 500);
+        }
     }
 
     public function destroy($permissionId)

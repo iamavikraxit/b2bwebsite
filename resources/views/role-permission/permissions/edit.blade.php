@@ -9,8 +9,8 @@
                             <h4>Edit Permission Form</h4>
                         </div>
                         <div class="col-auto">
-                            <a href="{{ url('permissions') }}"><button class="btn btn-md btn-danger"><i
-                                class="fa fa-arrow-left m-1"></i>Back</button></a>
+                            <a href="{{ url('permissions/' . $permission->id) }}"><button class="btn btn-md btn-danger"><i
+                                        class="fa fa-arrow-left m-1"></i>Back</button></a>
                         </div>
                     </div>
                 </div>
@@ -21,13 +21,14 @@
                         @method('PUT')
                         <div class="col-md-12 position-relative">
                             <label class="form-label" for="validationTooltip01"><b>Permission Name</b></label>
-                            <input class="form-control mt-1" id="validationTooltip01" type="text" name="permission_name" value="{{$permission->name}}"
-                                placeholder="Type Permission Name Here" required="">
+                            <input class="form-control mt-1" id="validationTooltip01" type="text" name="permission_name"
+                                value="{{ $permission->name }}" placeholder="Type Permission Name Here" required="">
                             <div class="valid-tooltip">Looks good!</div>
                         </div>
 
                         <div class="col-12">
-                            <button class="btn btn-primary float-right" type="button" onclick="updatePermission()">Update
+                            <button class="btn btn-primary float-right" type="button"
+                                onclick="updatePermission('{{ url('permissions', [$permission->id]) }}')">Update
                                 Permission</button>
                         </div>
                     </form>
@@ -37,16 +38,16 @@
     </div>
     @push('js')
         <script>
-            function updatePermission() {
+            function updatePermission(url) {
                 $.ajax({
                     type: 'POST',
-                    url: '{{ url('permissions') }}',
+                    url: url,
                     data: $('#updatePermissionForm').serialize(),
                     success: function(response) {
                         var permissionName = response.permission.name;
                         Swal.fire({
-                            title: permissionName + ' Created !',
-                            text: 'Thank You! Permission Created Successfully',
+                            title: permissionName + ' Updated !',
+                            text: 'Thank You! Permission Updated Successfully',
                             icon: 'success',
                             confirmButtonColor: '#3085d6',
                             confirmButtonText: 'Okay'
@@ -55,29 +56,26 @@
                         });
                     },
                     error: function(xhr, status, error) {
-                        // console.error(xhr.responseText);
                         if (xhr.status === 422) {
                             var errors = xhr.responseJSON.errors;
                             $.each(errors, function(key, value) {
-                                var inputName = key.replace(".", "_");
-                                var errorMessage = value[0]; // Get the first error message for simplicity
-                                var $inputField = $('input[name="' + key + '"]');
-                                $inputField.addClass(
-                                    'is-invalid'
-                                    ); // Add Bootstrap's is-invalid class to highlight the input field
-                                $inputField.after('<div class="invalid-feedback">' + errorMessage +
-                                    '</div>'); // Append error message below input field
-                                setTimeout(function() {
-                                    $inputField.removeClass(
-                                    'is-invalid'); // Remove is-invalid class after 5 seconds
-                                    $inputField.next('.invalid-feedback')
-                                .remove(); // Remove error message after 5 seconds
-                                }, 2500);
+                                if (key === 'permission_name') {
+                                    var errorMessage = value[0];
+                                    var inputName = key.replace(".", "_");
+                                    var $inputField = $('input[name="' + key + '"]');
+                                    $inputField.addClass('is-invalid');
+                                    $inputField.after('<div class="invalid-feedback">' + errorMessage +
+                                        '</div>');
+                                    setTimeout(function() {
+                                        $inputField.removeClass('is-invalid');
+                                        $inputField.next('.invalid-feedback').remove();
+                                    }, 2500);
+                                } else {
+                                    $('.permission-name-error').html(
+                                'An error occurred while updating permission. Please try again later.');
+                                }
                             });
-                        } else {
-                            $('.permission-name-error').html(
-                                'An error occurred while creating permission. Please try again later.');
-                        }
+                        } 
                     }
                 });
             }
