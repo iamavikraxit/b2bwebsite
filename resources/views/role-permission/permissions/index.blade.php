@@ -41,7 +41,7 @@
                                     <td>{{ $permission->updated_at }}</td>
                                     <td>
                                         <ul class="action">
-                                            <li class="edit"> <a href="{{route('permissions.edit', $permission->id)}}"><i class="icon-pencil-alt"></i></a></li>
+                                            <li class="edit"> <a href="{{url('permissions/' .$permission->id.'/edit')}}"><i class="icon-pencil-alt"></i></a></li>
                                             <li class="delete"><a href="#"
                                                     onclick="deletePermission({{ $permission->id }})">
                                                     <i class="icon-trash"></i>

@@ -48,14 +48,14 @@ class PermissionsController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit(Permission $permission)
     {
-        try {
-            $permission = Permission::findOrFail($id);
-            dd($permission);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'An error occurred while processing your request.'], 500);
-        }
+        return view('role-permission.permissions.edit', ['permission' => $permission]);
+    }
+
+    public function update(Request $request, Permission $permission)
+    {
+        // Put update logic here
     }
 
     public function destroy($permissionId)
